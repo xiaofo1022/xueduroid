@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.xiaofo1022.xueduroid.adapter.ViewPagerAdapter;
 import com.xiaofo1022.xueduroid.fragment.MainFragment;
+import com.xiaofo1022.xueduroid.fragment.MainListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         String[] viewTitles = new String[] {"随便刷", "最新榜", "最热榜", "乐疯了", "贡献榜"};
         List<Fragment> fragmentList = new ArrayList<>();
         for (String title : viewTitles) {
-            MainFragment fragment = new MainFragment();
+            MainListFragment fragment = new MainListFragment();
             fragmentList.add(fragment);
         }
 
