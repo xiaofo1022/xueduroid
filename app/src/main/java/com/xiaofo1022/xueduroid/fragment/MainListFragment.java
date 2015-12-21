@@ -1,5 +1,6 @@
 package com.xiaofo1022.xueduroid.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -8,8 +9,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.xiaofo1022.xueduroid.DetailActivity;
 import com.xiaofo1022.xueduroid.R;
 import com.xiaofo1022.xueduroid.adapter.ListViewAdapter;
 
@@ -38,6 +41,13 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
         refreshLayout.setOnRefreshListener(this);
         listView = (ListView)view.findViewById(R.id.main_listview);
         listView.setAdapter(new ListViewAdapter(getActivity(), R.layout.list_view_item, dataList));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
         return view;
     }
 
