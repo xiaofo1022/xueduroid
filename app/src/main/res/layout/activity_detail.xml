@@ -28,12 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_btn_bottom_pressed"
-        android:padding="10dp"
-        android:layout_marginTop="-1dp"
-        android:layout_marginLeft="-1dp"
-        android:layout_marginRight="-1dp"
-        android:textSize="16sp"
-        android:textColor="#fff"/>
+        style="@style/XueduInfoTitle"/>
 
     <ScrollView
         android:layout_width="match_parent"
