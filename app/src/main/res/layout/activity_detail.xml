@@ -46,6 +46,10 @@
             android:id="@+id/detail_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="@drawable/shape_divider_line"
+            android:showDividers="middle"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:orientation="vertical">
         </LinearLayout>
     </ScrollView>
