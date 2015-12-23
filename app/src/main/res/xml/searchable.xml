@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="薛微一度"
+    android:hint="薛微一度, 潇洒一路">
+</searchable>

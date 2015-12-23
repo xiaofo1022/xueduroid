@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             style="@style/XueduEditText"
-            android:background="@drawable/shape_edit_text_bg"
+            android:background="@drawable/selector_edit_text_bg"
             android:hint="我是谁？"/>
 
         <EditText
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             style="@style/XueduEditText"
-            android:background="@drawable/shape_edit_text_bg"
+            android:background="@drawable/selector_edit_text_bg"
             android:hint="我要说？"/>
 
         <EditText
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/XueduEditText"
-            android:background="@drawable/shape_edit_text_bg"
+            android:background="@drawable/selector_edit_text_bg"
             android:hint="是什么？"/>
 
         <Button
