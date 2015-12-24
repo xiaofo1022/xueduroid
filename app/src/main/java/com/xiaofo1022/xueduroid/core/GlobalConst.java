@@ -6,4 +6,5 @@ package com.xiaofo1022.xueduroid.core;
 public class GlobalConst {
     public static final int RESULT_OK = 1;
     public static final String SUBMIT_RESULT = "SubmitResult";
+    public static final String QUERY_TEXT = "QueryText";
 }

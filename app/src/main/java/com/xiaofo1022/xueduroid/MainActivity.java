@@ -78,10 +78,13 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.e("You queried this shit", query);
                 searchView.onActionViewCollapsed();
+                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                intent.putExtra(GlobalConst.QUERY_TEXT, query);
+                MainActivity.this.startActivity(intent);
                 return true;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
