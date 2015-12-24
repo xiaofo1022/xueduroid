@@ -1,6 +1,7 @@
 package com.xiaofo1022.xueduroid.fragment;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,6 +16,10 @@ import android.widget.ListView;
 import com.xiaofo1022.xueduroid.DetailActivity;
 import com.xiaofo1022.xueduroid.R;
 import com.xiaofo1022.xueduroid.adapter.ListViewAdapter;
+import com.xiaofo1022.xueduroid.core.GlobalConst;
+import com.xiaofo1022.xueduroid.core.JsonUtil;
+import com.xiaofo1022.xueduroid.core.TaskParam;
+import com.xiaofo1022.xueduroid.model.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,21 +31,28 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private SwipeRefreshLayout refreshLayout;
     private ListView listView;
-    private List<String> dataList;
-
-    public MainListFragment() {
-        initDataList();
-    }
+    private List<Answer> dataList = new ArrayList<>();
+    private ListViewAdapter viewAdapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_main, container, false);
+
         refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.listrefreshlayout);
         refreshLayout.setColorSchemeResources(R.color.background_material_dark);
         refreshLayout.setOnRefreshListener(this);
+        refreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.setRefreshing(true);
+                onRefresh();
+            }
+        });
+
         listView = (ListView)view.findViewById(R.id.main_listview);
-        listView.setAdapter(new ListViewAdapter(getActivity(), R.layout.list_view_item, dataList));
+        viewAdapter = new ListViewAdapter(getActivity(), R.layout.list_view_item, dataList);
+        listView.setAdapter(viewAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -48,31 +60,8 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
                 getActivity().startActivity(intent);
             }
         });
-        return view;
-    }
 
-    private void initDataList() {
-        dataList = new ArrayList<>();
-        dataList.add("马外");
-        dataList.add("呱呱");
-        dataList.add("风");
-        dataList.add("失眠的时候玩什么游戏帮助入睡？");
-        dataList.add("香疯了");
-        dataList.add("母液");
-        dataList.add("理想 歌单");
-        dataList.add("薛科长喜欢喝什么酒");
-        dataList.add("裸足上脚");
-        dataList.add("水曲柳儿了");
-        dataList.add("小懦弱");
-        dataList.add("薛哥最帅");
-        dataList.add("Bullet For My Valentine");
-        dataList.add("运动员扔铅球的时候为什么要仰天长啸");
-        dataList.add("花伦 歌单");
-        dataList.add("牙膏当胡泡儿");
-        dataList.add("失格懦夫");
-        dataList.add("大便冲不下去怎么办");
-        dataList.add("薛哥最喜欢的现役NBA球星是谁？");
-        dataList.add("生命之水");
+        return view;
     }
 
     @Override
@@ -80,8 +69,24 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                refreshLayout.setRefreshing(false);
+                new GetAnswerListTask().execute(new TaskParam<>(GlobalConst.BASE_URL + "shuffle", Answer.class));
             }
         }, 1000);
+    }
+
+    private class GetAnswerListTask extends AsyncTask<TaskParam<Answer>, Void, List<Answer>> {
+        @Override
+        protected void onPostExecute(List<Answer> answers) {
+            dataList = answers;
+            listView.setAdapter(viewAdapter);
+            viewAdapter.notifyDataSetChanged();
+            refreshLayout.setRefreshing(false);
+        }
+        @Override
+        protected List<Answer> doInBackground(TaskParam<Answer>... params) {
+            TaskParam<Answer> param = params[0];
+            List<Answer> dataList = JsonUtil.getDataList(param.getUrl(), param.getCls());
+            return dataList;
+        }
     }
 }

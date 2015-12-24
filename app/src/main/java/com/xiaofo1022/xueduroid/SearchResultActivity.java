@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.xiaofo1022.xueduroid.adapter.ListViewAdapter;
 import com.xiaofo1022.xueduroid.core.GlobalConst;
+import com.xiaofo1022.xueduroid.model.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class SearchResultActivity extends AppCompatActivity implements SwipeRefr
     private Toolbar toolbar;
     private SwipeRefreshLayout refreshLayout;
     private ListView listView;
-    private List<String> dataList;
+    private List<Answer> dataList;
     private ListViewAdapter viewAdapter;
 
     @Override
@@ -72,7 +73,9 @@ public class SearchResultActivity extends AppCompatActivity implements SwipeRefr
             public void run() {
                 refreshLayout.setRefreshing(false);
                 toolbar.setTitle("检索结果0条");
-                dataList.add("这事儿薛科长确实是不知道啊！");
+                Answer answer = new Answer();
+                answer.setTitle("这事儿薛科长确实是不知道啊！");
+                dataList.add(answer);
                 viewAdapter.notifyDataSetChanged();
             }
         }, 2000);
