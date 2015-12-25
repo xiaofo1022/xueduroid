@@ -14,8 +14,9 @@ import java.net.URL;
 public class NetUtil {
     public static byte[] doGet(String urlAddress) throws IOException {
         URL url = new URL(urlAddress);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = null;
         try {
+            connection = (HttpURLConnection) url.openConnection();
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream in = connection.getInputStream();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -31,15 +32,22 @@ public class NetUtil {
         } catch (Exception e) {
             Log.e("NetUtil", "getUrlBytes", e);
         } finally {
-            connection.disconnect();
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
         return null;
     }
 
     public static String doGetJsonString(String urlAddress) {
         try {
-            return new String(doGet(urlAddress));
-        } catch (IOException e) {
+            byte[] datas = doGet(urlAddress);
+            if (datas != null && datas.length > 0) {
+                return new String(datas);
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
             Log.e("NetUtil", "doGetJsonString", e);
             return "";
         }

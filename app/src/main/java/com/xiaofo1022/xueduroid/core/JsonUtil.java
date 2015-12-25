@@ -19,8 +19,8 @@ public class JsonUtil {
 
     public static <T> List<T> getDataList(String url, Class<T> cls) {
         List<T> dataList = null;
-        String jsonString = NetUtil.doGetJsonString(url);
         try {
+            String jsonString = NetUtil.doGetJsonString(url);
             JSONArray jsonArray = (JSONArray)new JSONTokener(jsonString).nextValue();
             if (jsonArray != null && jsonArray.length() > 0) {
                 dataList = new ArrayList<>(jsonArray.length());
@@ -28,7 +28,7 @@ public class JsonUtil {
                     dataList.add(createDataByJson(jsonArray.getJSONObject(i), cls));
                 }
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e("JsonUtil", "getDataList", e);
         }
         return dataList;

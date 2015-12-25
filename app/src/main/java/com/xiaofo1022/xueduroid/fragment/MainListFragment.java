@@ -20,6 +20,8 @@ import com.xiaofo1022.xueduroid.core.GlobalConst;
 import com.xiaofo1022.xueduroid.core.JsonUtil;
 import com.xiaofo1022.xueduroid.core.TaskParam;
 import com.xiaofo1022.xueduroid.model.Answer;
+import com.xiaofo1022.xueduroid.thread.BackgroundServiceCaller;
+import com.xiaofo1022.xueduroid.thread.JsonCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +35,14 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
     private ListView listView;
     private List<Answer> dataList = new ArrayList<>();
     private ListViewAdapter viewAdapter;
+    private BackgroundServiceCaller<Answer> backgroundServiceCaller;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_main, container, false);
+
+        initBackgroundService();
 
         refreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.listrefreshlayout);
         refreshLayout.setColorSchemeResources(R.color.background_material_dark);
@@ -64,20 +69,32 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
         return view;
     }
 
+    private void initBackgroundService() {
+        backgroundServiceCaller = new BackgroundServiceCaller<>(new Handler(), new JsonCallback<Answer>() {
+            @Override
+            public void callback(List<Answer> result) {
+                if (result != null) {
+                    dataList = result;
+                }
+                viewAdapter.notifyDataSetChanged();
+                refreshLayout.setRefreshing(false);
+            }
+        });
+        backgroundServiceCaller.start();
+        backgroundServiceCaller.getLooper();
+    }
+
     @Override
     public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new GetAnswerListTask().execute(new TaskParam<>(GlobalConst.BASE_URL + "shuffle", Answer.class));
-            }
-        }, 1000);
+        backgroundServiceCaller.sendMessage(new TaskParam<>(GlobalConst.BASE_URL + "shuffle", Answer.class));
     }
 
     private class GetAnswerListTask extends AsyncTask<TaskParam<Answer>, Void, List<Answer>> {
         @Override
         protected void onPostExecute(List<Answer> answers) {
-            dataList = answers;
+            if (answers != null) {
+                dataList = answers;
+            }
             listView.setAdapter(viewAdapter);
             viewAdapter.notifyDataSetChanged();
             refreshLayout.setRefreshing(false);
