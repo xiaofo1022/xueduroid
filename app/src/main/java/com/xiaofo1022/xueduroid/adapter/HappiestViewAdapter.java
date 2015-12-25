@@ -13,14 +13,14 @@ import com.xiaofo1022.xueduroid.model.Answer;
 import java.util.List;
 
 /**
- * Created by Xiaofo on 2015/12/17.
+ * Created by Xiaofo on 2015/12/25.
  */
-public class ListViewAdapter extends ArrayAdapter<Answer> {
+public class HappiestViewAdapter extends ArrayAdapter<Answer> {
 
     private int resource;
     private List<Answer> dataList;
 
-    public ListViewAdapter(Context context, int resource, List<Answer> dataList) {
+    public HappiestViewAdapter(Context context, int resource, List<Answer> dataList) {
         super(context, resource, dataList);
         this.resource = resource;
         this.dataList = dataList;
@@ -34,8 +34,11 @@ public class ListViewAdapter extends ArrayAdapter<Answer> {
         } else {
             view = convertView;
         }
+        TextView title = (TextView)view.findViewById(R.id.tv_list_item);
+        TextView countNumber = (TextView)view.findViewById(R.id.tv_count_number);
         Answer data = dataList.get(position);
-        ((TextView)view).setText(data.getTitle());
+        title.setText(data.getTitle());
+        countNumber.setText(data.getHappyCount() + "次");
         return view;
     }
 }

@@ -2,6 +2,9 @@ package com.xiaofo1022.xueduroid.core;
 
 import android.util.Log;
 
+import com.xiaofo1022.xueduroid.model.FansAnswer;
+import com.xiaofo1022.xueduroid.model.SupplementAnswer;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +24,14 @@ public class JsonUtil {
         List<T> dataList = null;
         try {
             String jsonString = NetUtil.doGetJsonString(url);
-            JSONArray jsonArray = (JSONArray)new JSONTokener(jsonString).nextValue();
+            Object value = new JSONTokener(jsonString).nextValue();
+            JSONArray jsonArray = null;
+            if (value instanceof JSONObject) {
+                jsonArray = new JSONArray();
+                jsonArray.put(value);
+            } else if (value instanceof  JSONArray) {
+                jsonArray = (JSONArray)value;
+            }
             if (jsonArray != null && jsonArray.length() > 0) {
                 dataList = new ArrayList<>(jsonArray.length());
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -50,6 +60,23 @@ public class JsonUtil {
                 } else if (field.getType() == Date.class) {
                     long value = jsonObject.getLong(field.getName());
                     field.set(data, new Date(value));
+                } else if (field.getType() == FansAnswer.class) {
+                    JSONObject jObject = jsonObject.optJSONObject("fansAnswer");
+                    if (jObject != null && jObject.length() > 0) {
+                        FansAnswer fansAnswer = createDataByJson(jObject, FansAnswer.class);
+                        field.set(data, fansAnswer);
+                    }
+                } else {
+                    if (field.getName().equals("supplementAnswerList")) {
+                        JSONArray jsonArray = jsonObject.optJSONArray("supplementAnswerList");
+                        if (jsonArray != null && jsonArray.length() > 0) {
+                            List<SupplementAnswer> supplementAnswerList = new ArrayList<>(jsonArray.length());
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                supplementAnswerList.add(createDataByJson(jsonArray.getJSONObject(i), SupplementAnswer.class));
+                            }
+                            field.set(data, supplementAnswerList);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {

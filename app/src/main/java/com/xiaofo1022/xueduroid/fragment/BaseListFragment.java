@@ -1,7 +1,5 @@
 package com.xiaofo1022.xueduroid.fragment;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,15 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.xiaofo1022.xueduroid.DetailActivity;
 import com.xiaofo1022.xueduroid.R;
-import com.xiaofo1022.xueduroid.adapter.ListViewAdapter;
-import com.xiaofo1022.xueduroid.core.GlobalConst;
-import com.xiaofo1022.xueduroid.core.JsonUtil;
 import com.xiaofo1022.xueduroid.core.TaskParam;
-import com.xiaofo1022.xueduroid.model.Answer;
+import com.xiaofo1022.xueduroid.listener.AnswerListItemClickListener;
 import com.xiaofo1022.xueduroid.thread.BackgroundServiceCaller;
 import com.xiaofo1022.xueduroid.thread.JsonCallback;
 
@@ -27,15 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Xiaofo on 2015/12/17.
+ * Created by Xiaofo on 2015/12/25.
  */
-public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public abstract class BaseListFragment<T> extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout refreshLayout;
     private ListView listView;
-    private List<Answer> dataList = new ArrayList<>();
-    private ListViewAdapter viewAdapter;
-    private BackgroundServiceCaller<Answer> backgroundServiceCaller;
+    private ArrayAdapter<T> viewAdapter;
+    private BackgroundServiceCaller<T> backgroundServiceCaller;
+    protected List<T> dataList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -54,31 +49,29 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
             refreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                refreshLayout.setRefreshing(true);
-                onRefresh();
+                    refreshLayout.setRefreshing(true);
+                    onRefresh();
                 }
             });
         }
         listView = (ListView)view.findViewById(R.id.main_listview);
-        viewAdapter = new ListViewAdapter(getActivity(), R.layout.list_view_item, dataList);
+        viewAdapter = createArrayAdapter();
         listView.setAdapter(viewAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                getActivity().startActivity(intent);
-            }
-        });
+        listView.setOnItemClickListener(createItemClickListener());
+    }
+
+    protected AdapterView.OnItemClickListener createItemClickListener() {
+        return new AnswerListItemClickListener(getActivity(), dataList);
     }
 
     private void initBackgroundService() {
-        backgroundServiceCaller = new BackgroundServiceCaller<>(new Handler(), new JsonCallback<Answer>() {
+        backgroundServiceCaller = new BackgroundServiceCaller<>(new Handler(), new JsonCallback<T>() {
             @Override
-            public void callback(List<Answer> result) {
+            public void callback(List<T> result) {
                 if (result != null) {
                     dataList.clear();
-                    for (Answer answer : result) {
-                        dataList.add(answer);
+                    for (T data : result) {
+                        dataList.add(data);
                     }
                 }
                 viewAdapter.notifyDataSetChanged();
@@ -91,6 +84,9 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        backgroundServiceCaller.sendMessage(new TaskParam<>(GlobalConst.BASE_URL + "shuffle", Answer.class));
+        backgroundServiceCaller.sendMessage(createTaskParam());
     }
+
+    protected abstract ArrayAdapter<T> createArrayAdapter();
+    protected  abstract TaskParam<T> createTaskParam();
 }

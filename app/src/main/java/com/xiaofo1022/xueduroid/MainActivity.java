@@ -1,8 +1,5 @@
 package com.xiaofo1022.xueduroid;
 
-import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,16 +10,17 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 import com.xiaofo1022.xueduroid.adapter.ViewPagerAdapter;
 import com.xiaofo1022.xueduroid.core.GlobalConst;
-import com.xiaofo1022.xueduroid.fragment.MainFragment;
-import com.xiaofo1022.xueduroid.fragment.MainListFragment;
+import com.xiaofo1022.xueduroid.fragment.FansContributeListFragment;
+import com.xiaofo1022.xueduroid.fragment.HappiestListFragment;
+import com.xiaofo1022.xueduroid.fragment.HotestListFragment;
+import com.xiaofo1022.xueduroid.fragment.LatestListFragment;
+import com.xiaofo1022.xueduroid.fragment.ShuffleListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,10 +55,11 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         String[] viewTitles = new String[] {"随便刷", "最新榜", "最热榜", "乐疯了", "贡献榜"};
         List<Fragment> fragmentList = new ArrayList<>();
-        for (String title : viewTitles) {
-            MainListFragment fragment = new MainListFragment();
-            fragmentList.add(fragment);
-        }
+        fragmentList.add(new ShuffleListFragment());
+        fragmentList.add(new LatestListFragment());
+        fragmentList.add(new HotestListFragment());
+        fragmentList.add(new HappiestListFragment());
+        fragmentList.add(new FansContributeListFragment());
 
         pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), viewTitles, fragmentList);
         viewPager.setAdapter(pagerAdapter);
