@@ -1,11 +1,13 @@
 package com.xiaofo1022.xueduroid.fragment;
 
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.xiaofo1022.xueduroid.R;
 import com.xiaofo1022.xueduroid.adapter.ContributeViewAdapter;
 import com.xiaofo1022.xueduroid.core.GlobalConst;
 import com.xiaofo1022.xueduroid.core.TaskParam;
+import com.xiaofo1022.xueduroid.listener.ContributeListItemClickListener;
 import com.xiaofo1022.xueduroid.model.FansContribute;
 
 /**
@@ -21,5 +23,10 @@ public class FansContributeListFragment extends BaseListFragment<FansContribute>
     @Override
     protected TaskParam<FansContribute> createTaskParam() {
         return new TaskParam<>(GlobalConst.BASE_URL + "contribute", FansContribute.class);
+    }
+
+    @Override
+    protected AdapterView.OnItemClickListener createItemClickListener() {
+        return new ContributeListItemClickListener<>(getActivity(), dataList);
     }
 }

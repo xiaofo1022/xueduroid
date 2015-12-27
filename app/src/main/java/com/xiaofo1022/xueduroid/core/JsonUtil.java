@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Xiaofo on 2015/12/24.
@@ -24,6 +25,27 @@ public class JsonUtil {
         List<T> dataList = null;
         try {
             String jsonString = NetUtil.doGetJsonString(url);
+            dataList = createDataListByJsonString(jsonString, cls);
+        } catch (Exception e) {
+            Log.e("JsonUtil", "getDataList", e);
+        }
+        return dataList;
+    }
+
+    public static <T> List<T> postDataList(String url, Class<T> cls, Map<String, Object> paramData) {
+        List<T> dataList = null;
+        try {
+            String jsonString = new String(NetUtil.doPost(url, paramData));
+            dataList = createDataListByJsonString(jsonString, cls);
+        } catch (Exception e) {
+            Log.e("JsonUtil", "getDataList", e);
+        }
+        return dataList;
+    }
+
+    private static <T> List<T> createDataListByJsonString(String jsonString, Class<T> cls) {
+        List<T> dataList = null;
+        try {
             Object value = new JSONTokener(jsonString).nextValue();
             JSONArray jsonArray = null;
             if (value instanceof JSONObject) {
@@ -39,7 +61,7 @@ public class JsonUtil {
                 }
             }
         } catch (Exception e) {
-            Log.e("JsonUtil", "getDataList", e);
+            Log.e("JsonUtil", "createDataListByJsonString", e);
         }
         return dataList;
     }
@@ -55,11 +77,18 @@ public class JsonUtil {
                     int value = jsonObject.getInt(field.getName());
                     field.set(data, value);
                 } else if (field.getType() == String.class) {
-                    String value = jsonObject.getString(field.getName());
-                    field.set(data, value);
+                    try {
+                        field.set(data, jsonObject.getString(field.getName()));
+                    } catch (Exception e) {
+                        field.set(data, "");
+                    }
                 } else if (field.getType() == Date.class) {
-                    long value = jsonObject.getLong(field.getName());
-                    field.set(data, new Date(value));
+                    try {
+                        long value = jsonObject.getLong(field.getName());
+                        field.set(data, new Date(value));
+                    } catch (Exception e) {
+                        field.set(data, new Date());
+                    }
                 } else if (field.getType() == FansAnswer.class) {
                     JSONObject jObject = jsonObject.optJSONObject("fansAnswer");
                     if (jObject != null && jObject.length() > 0) {
@@ -80,6 +109,7 @@ public class JsonUtil {
                 }
             }
         } catch (Exception e) {
+            Log.e("JsonUtil", "createDataByJson", e);
         }
         return data;
     }

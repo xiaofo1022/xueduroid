@@ -25,6 +25,7 @@
         <activity android:name=".ContributeOilActivity" />
         <activity android:name=".SupplementActivity" />
         <activity android:name=".SearchResultActivity" />
+        <activity android:name=".ContributeListActivity" />
     </application>
 
 </manifest>
