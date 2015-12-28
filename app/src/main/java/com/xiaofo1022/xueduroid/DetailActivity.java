@@ -182,9 +182,6 @@ public class DetailActivity extends AppCompatActivity implements SwipeRefreshLay
     private View createInfoView(String info, String contributor) {
         LinearLayout view = (LinearLayout)LayoutInflater.from(this).inflate(R.layout.item_answer_info, null);
 
-        //TextView textInfo = (TextView)view.findViewById(R.id.tv_answer_info);
-        //textInfo.setText(info);
-
         String[] infoLines = info.split("\n");
         for (String infoLine : infoLines) {
             TextView text = (TextView)LayoutInflater.from(this).inflate(R.layout.textview_answer_info, null);
@@ -214,6 +211,10 @@ public class DetailActivity extends AppCompatActivity implements SwipeRefreshLay
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             this.finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_about) {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

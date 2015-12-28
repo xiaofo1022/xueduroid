@@ -83,6 +83,10 @@ public class ContributeListActivity extends AppCompatActivity implements SwipeRe
         if (item.getItemId() == android.R.id.home) {
             this.finish();
             return true;
+        } else if (item.getItemId() == R.id.action_about) {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
