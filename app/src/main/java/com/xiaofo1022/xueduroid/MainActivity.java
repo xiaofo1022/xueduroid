@@ -78,9 +78,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.onActionViewCollapsed();
-                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-                intent.putExtra(GlobalConst.QUERY_TEXT, query);
-                MainActivity.this.startActivity(intent);
+                if (query != null && !query.trim().equals("")) {
+                    Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                    intent.putExtra(GlobalConst.QUERY_TEXT, query.trim());
+                    MainActivity.this.startActivity(intent);
+                }
                 return true;
             }
 

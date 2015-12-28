@@ -10,7 +10,6 @@ import com.xiaofo1022.xueduroid.core.TaskParam;
 
 import java.util.List;
 import java.util.Map;
-import java.util.jar.Manifest;
 
 /**
  * Created by kurt.yu on 12/25/2015.
@@ -27,7 +26,6 @@ public class BackgroundServiceCaller<T> extends HandlerThread {
         super("BackgroundServiceCaller");
         this.responseHandler = responseHandler;
         this.callback = callback;
-        handler = new Handler();
     }
 
     @Override

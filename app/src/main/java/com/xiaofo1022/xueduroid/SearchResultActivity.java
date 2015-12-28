@@ -8,14 +8,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.xiaofo1022.xueduroid.adapter.ListViewAdapter;
 import com.xiaofo1022.xueduroid.core.GlobalConst;
+import com.xiaofo1022.xueduroid.core.TaskParam;
+import com.xiaofo1022.xueduroid.listener.AnswerListItemClickListener;
 import com.xiaofo1022.xueduroid.model.Answer;
+import com.xiaofo1022.xueduroid.thread.BackgroundServiceCaller;
+import com.xiaofo1022.xueduroid.thread.JsonCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kurt.yu on 12/24/2015.
@@ -27,6 +34,13 @@ public class SearchResultActivity extends AppCompatActivity implements SwipeRefr
     private ListView listView;
     private List<Answer> dataList;
     private ListViewAdapter viewAdapter;
+    private BackgroundServiceCaller<Answer> backgroundServiceCaller;
+    private String queryText;
+    private Map<String, Object> requestParam = new HashMap<>();
+
+    public SearchResultActivity() {
+        initBackgroundService();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +49,8 @@ public class SearchResultActivity extends AppCompatActivity implements SwipeRefr
 
         Intent intent = getIntent();
         if (intent != null) {
-            String queryText = intent.getStringExtra(GlobalConst.QUERY_TEXT);
-            Log.i("You queried this shit", queryText);
+            queryText = intent.getStringExtra(GlobalConst.QUERY_TEXT);
+            requestParam.put("title", queryText);
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,6 +72,29 @@ public class SearchResultActivity extends AppCompatActivity implements SwipeRefr
         dataList = new ArrayList<>();
         viewAdapter = new ListViewAdapter(this, R.layout.list_view_item, dataList);
         listView.setAdapter(viewAdapter);
+        listView.setOnItemClickListener(new AnswerListItemClickListener(this, dataList));
+    }
+
+    private void initBackgroundService() {
+        backgroundServiceCaller = new BackgroundServiceCaller<>(new Handler(), new JsonCallback<Answer>() {
+            @Override
+            public void callback(List<Answer> result) {
+                int resultCount = 0;
+                if (result != null) {
+                    dataList.clear();
+                    for (Answer data : result) {
+                        dataList.add(data);
+                    }
+                    resultCount = dataList.size();
+                }
+                toolbar.setTitle("检索结果" + resultCount + "条");
+                viewAdapter.notifyDataSetChanged();
+                refreshLayout.setRefreshing(false);
+            }
+        });
+        backgroundServiceCaller.setRequestMethod("POST");
+        backgroundServiceCaller.start();
+        backgroundServiceCaller.getLooper();
     }
 
     @Override
@@ -67,17 +104,22 @@ public class SearchResultActivity extends AppCompatActivity implements SwipeRefr
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                refreshLayout.setRefreshing(false);
-                toolbar.setTitle("检索结果0条");
-                Answer answer = new Answer();
-                answer.setTitle("这事儿薛科长确实是不知道啊！");
-                dataList.add(answer);
-                viewAdapter.notifyDataSetChanged();
+                backgroundServiceCaller.setRequestParam(requestParam);
+                backgroundServiceCaller.sendMessage(new TaskParam<>(GlobalConst.BASE_URL + "blursearch", Answer.class));
             }
-        }, 2000);
+        }, 500);
     }
 }

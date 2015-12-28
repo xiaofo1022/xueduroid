@@ -6,20 +6,4 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
-    <TextView
-        android:id="@+id/tv_answer_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:textSize="16sp"
-        android:textColor="#212121"/>
-
-    <TextView
-        android:id="@+id/tv_answer_contributor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#212121"
-        android:gravity="right"/>
-
 </LinearLayout>

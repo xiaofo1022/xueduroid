@@ -13,4 +13,5 @@ public class GlobalConst {
     public static final String QUERY_TEXT = "QueryText";
     public static final String ANSWER_ID = "AnswerId";
     public static final String FANS_NAME = "FansName";
+    public static final String SUPPLEMENT_TITLE = "SupplementTitle";
 }

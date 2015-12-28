@@ -79,8 +79,10 @@ public class NetUtil {
 
     private static byte[] encodeParamData(Map<String, Object> paramData) throws UnsupportedEncodingException, JSONException {
         JSONObject jsonObject = new JSONObject();
-        for (String key : paramData.keySet()) {
-            jsonObject.put(key, paramData.get(key));
+        if (paramData != null) {
+            for (String key : paramData.keySet()) {
+                jsonObject.put(key, paramData.get(key));
+            }
         }
         return jsonObject.toString().getBytes("utf-8");
     }

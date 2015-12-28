@@ -53,6 +53,9 @@ public class JsonUtil {
                 jsonArray.put(value);
             } else if (value instanceof  JSONArray) {
                 jsonArray = (JSONArray)value;
+            } else if (value instanceof String) {
+                dataList = new ArrayList<>();
+                dataList.add((T)value);
             }
             if (jsonArray != null && jsonArray.length() > 0) {
                 dataList = new ArrayList<>(jsonArray.length());
